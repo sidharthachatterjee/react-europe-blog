@@ -1,12 +1,14 @@
 import React from "react"
-import { graphql } from "gatsby"
+import { graphql, Link } from "gatsby"
 
 export default ({ data }) => {
   return (
     <ul>
       {data.allMarkdownRemark.nodes.map(post => (
         <li>
-          <h4>{post.frontmatter.title}</h4>
+          <Link to={`/blog-posts/${post.fields.slug}`}>
+            <h4>{post.frontmatter.title}</h4>
+          </Link>
           <p>{post.excerpt}</p>
         </li>
       ))}
@@ -16,10 +18,13 @@ export default ({ data }) => {
 
 export const query = graphql`
   {
-    allMarkdownRemark {
+    allMarkdownRemark(filter: { frontmatter: { title: { ne: "" } } }) {
       nodes {
         frontmatter {
           title
+        }
+        fields {
+          slug
         }
         excerpt
       }
