@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { graphql, useStaticQuery } from "gatsby"
 
 export default () => {
@@ -12,6 +12,13 @@ export default () => {
       }
     }
   `)
+
+  useEffect(() => {
+    setTimeout(() => {
+      console.log({ site })
+    }, 5000)
+  }, [])
+
   return (
     <footer>
       {site.siteMetadata.title}

@@ -22,6 +22,10 @@ module.exports.createPages = async ({ actions, graphql }) => {
       name: post.frontmatter.title,
       path: `/blog-posts/${kebabcase(post.frontmatter.title)}`,
       component: blogPostTemplate,
+      context: {
+        title: post.frontmatter.title,
+        blah: "Blah",
+      },
     })
   })
 }
