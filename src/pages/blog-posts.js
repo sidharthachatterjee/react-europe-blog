@@ -4,12 +4,12 @@ import { graphql, Link } from "gatsby"
 export default ({ data }) => {
   return (
     <ul>
-      {data.allMarkdownRemark.nodes.map(post => (
+      {data.allBlogPost.nodes.map(post => (
         <li>
-          <Link to={`/blog-posts/${post.fields.slug}`}>
-            <h4>{post.frontmatter.title}</h4>
+          <Link to={`/blog-posts/${post.slug}`}>
+            <h4>{post.title}</h4>
           </Link>
-          <p>{post.excerpt}</p>
+          {/* <p>{post.excerpt}</p> */}
         </li>
       ))}
     </ul>
@@ -18,15 +18,10 @@ export default ({ data }) => {
 
 export const query = graphql`
   {
-    allMarkdownRemark(filter: { frontmatter: { title: { ne: "" } } }) {
+    allBlogPost(filter: { title: { ne: "" } }) {
       nodes {
-        frontmatter {
-          title
-        }
-        fields {
-          slug
-        }
-        excerpt
+        title
+        slug
       }
     }
   }
