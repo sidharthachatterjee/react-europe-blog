@@ -42,16 +42,28 @@ module.exports.createResolvers = ({ createResolvers }) => {
     ContentfulBlogPost: {
       content: {
         resolve: async (source, args, context, info) => {
-          // const node = context.nodeModel.getNodeById({
-          //   id: source.body.childMarkdownRemark.id,
-          // })
-          // const fieldName = "html"
-          // const type = info.schema.getType(`ContentfulBlogPost`)
-          // const resolver = type.getFields()[fieldName].resolve
-          // const result = await resolver(node, args, context, {
-          //   fieldName,
-          // })
-          // return result
+          const node = context.nodeModel.getNodeById({
+            id: source.body___NODE,
+          })
+
+          const fieldName = "childMarkdownRemark"
+          const type = info.schema.getType(`contentfulBlogPostBodyTextNode`)
+          const resolver = type.getFields()[fieldName].resolve
+          const result = await resolver(node, args, context, {
+            fieldName,
+          })
+          const markdownRemarkType = info.schema.getType(`MarkdownRemark`)
+          const markdownRemarkResolver = markdownRemarkType.getFields()["html"]
+            .resolve
+          const markdownRemarkResult = await markdownRemarkResolver(
+            result,
+            args,
+            context,
+            {
+              fieldName: "html",
+            }
+          )
+          return markdownRemarkResult
         },
       },
     },
@@ -76,26 +88,22 @@ module.exports.createPages = async ({ actions, graphql }) => {
 
   const { data } = await graphql(`
     {
-      allMarkdownRemark(filter: { frontmatter: { title: { ne: "" } } }) {
+      allBlogPost(filter: { title: { ne: "" } }) {
         nodes {
-          frontmatter {
-            title
-          }
-          fields {
-            slug
-          }
+          title
+          slug
         }
       }
     }
   `)
 
-  data.allMarkdownRemark.nodes.forEach(post => {
+  data.allBlogPost.nodes.forEach(post => {
     createPage({
-      name: post.frontmatter.title,
-      path: `/blog-posts/${post.fields.slug}`,
+      name: post.title,
+      path: `/blog-posts/${post.slug}`,
       component: blogPostTemplate,
       context: {
-        title: post.frontmatter.title,
+        title: post.title,
       },
     })
   })

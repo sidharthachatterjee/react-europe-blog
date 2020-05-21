@@ -4,10 +4,10 @@ import { graphql } from "gatsby"
 export default ({ data }) => {
   return (
     <article>
-      <h1>{data.markdownRemark.frontmatter.title}</h1>
+      <h1>{data.blogPost.title}</h1>
       <div
         dangerouslySetInnerHTML={{
-          __html: data.markdownRemark.html,
+          __html: data.blogPost.content,
         }}
       />
     </article>
@@ -16,11 +16,10 @@ export default ({ data }) => {
 
 export const query = graphql`
   query BlogPostQuery($title: String) {
-    markdownRemark(frontmatter: { title: { eq: $title } }) {
-      frontmatter {
-        title
-      }
-      html
+    blogPost(title: { eq: $title }) {
+      title
+      slug
+      content
     }
   }
 `
